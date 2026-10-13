@@ -1,0 +1,795 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Storybook</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: white;
+    color: black;
+    transition: 0.3s;
+}
+
+header {
+    background: black;
+    color: white;
+    text-align: center;
+    padding: 25px;
+}
+
+header h1 {
+    margin-bottom: 8px;
+}
+
+nav {
+    background: white;
+    padding: 15px;
+    text-align: center;
+    border-bottom: 2px solid black;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+nav a {
+    color: black;
+    text-decoration: none;
+    margin: 10px;
+    font-weight: bold;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+main {
+    max-width: 1100px;
+    margin: auto;
+    padding: 20px;
+}
+
+section {
+    margin-bottom: 35px;
+}
+
+h2 {
+    border-bottom: 2px solid black;
+    padding-bottom: 10px;
+}
+
+#home {
+    text-align: center;
+    padding: 30px 10px;
+}
+
+#search {
+    width: 80%;
+    max-width: 450px;
+    padding: 12px;
+    border: 1px solid black;
+    font-size: 16px;
+}
+
+.book-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.book {
+    border: 1px solid black;
+    padding: 15px;
+    text-align: center;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.book img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border: 1px solid black;
+    margin-bottom: 10px;
+    background: #eee;
+}
+
+.book h3 {
+    font-size: 18px;
+    margin: 8px 0;
+}
+
+.book p {
+    font-size: 14px;
+}
+
+button {
+    background: black;
+    color: white;
+    border: 1px solid black;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+button:hover {
+    background: white;
+    color: black;
+}
+
+.book button {
+    margin-top: auto;
+}
+
+#reader {
+    border: 1px solid black;
+    padding: 20px;
+    line-height: 1.8;
+}
+
+#storyImage {
+    display: block;
+    width: 100%;
+    max-width: 500px;
+    height: 300px;
+    object-fit: cover;
+    margin: 20px auto;
+    border: 1px solid black;
+    background: #eee;
+}
+
+#storyContent {
+    white-space: pre-line;
+}
+
+footer {
+    background: black;
+    color: white;
+    text-align: center;
+    padding: 15px;
+}
+
+/* DARK MODE */
+
+body.dark {
+    background: #111;
+    color: white;
+}
+
+body.dark nav,
+body.dark .book,
+body.dark #reader {
+    background: #222;
+    color: white;
+    border-color: white;
+}
+
+body.dark nav a {
+    color: white;
+}
+
+body.dark h2 {
+    border-color: white;
+}
+
+body.dark button {
+    background: white;
+    color: black;
+    border-color: white;
+}
+
+body.dark button:hover {
+    background: black;
+    color: white;
+}
+
+body.dark #search {
+    background: #222;
+    color: white;
+    border-color: white;
+}
+
+body.dark #search::placeholder {
+    color: #ccc;
+}
+
+body.dark .book img,
+body.dark #storyImage {
+    border-color: white;
+}
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+    .book-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    nav a {
+        display: inline-block;
+        margin: 5px;
+    }
+}
+
+@media (max-width: 450px) {
+    .book-list {
+        grid-template-columns: 1fr;
+    }
+
+    .book img {
+        height: 220px;
+    }
+
+    #storyImage {
+        height: 220px;
+    }
+
+    main {
+        padding: 12px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>MY STORYBOOK</h1>
+    <p>Discover and Read Amazing Stories</p>
+</header>
+
+<nav id="navigation">
+    <a href="#home">Home</a>
+    <a href="#stories">Stories</a>
+    <a href="#about">About</a>
+    <button id="themeBtn" type="button">Dark Mode</button>
+</nav>
+
+<main>
+
+    <section id="home">
+        <h2>Welcome to My Storybook</h2>
+        <p>Choose a story and enjoy reading!</p>
+
+        <input
+            type="text"
+            id="search"
+            placeholder="Search stories, genres, or authors..."
+            aria-label="Search stories"
+        >
+    </section>
+
+    <section id="stories">
+        <h2>All Stories</h2>
+        <p id="storyCount">30 short stories to explore.</p>
+        <div id="bookList" class="book-list"></div>
+    </section>
+
+    <section id="reader" hidden>
+        <h2 id="storyTitle"></h2>
+        <p id="storyGenre"></p>
+        <p id="storyMeta"></p>
+
+        <img id="storyImage" src="" alt="Story Cover">
+
+        <hr>
+
+        <h3>Chapter 1</h3>
+        <p id="storyContent"></p>
+
+        <button id="backBtn" type="button">
+            Back to Stories
+        </button>
+    </section>
+
+    <section id="about">
+        <h2>About Us</h2>
+        <p>
+            My Storybook is a simple website created for readers
+            who enjoy different kinds of short stories. It includes
+            adventure, fantasy, mystery, friendship, school life,
+            family, and other interesting genres.
+        </p>
+        <p>Read a story, enjoy the pictures, and discover new ideas!</p>
+    </section>
+
+</main>
+
+<footer>
+    <p>&copy; 2026 My Storybook | ITE 1 Project</p>
+</footer>
+
+<script>
+// =====================================
+// 30 SHORT STORIES WITH IMAGES
+// =====================================
+
+const stories = [
+
+{
+title: "The Last Letter",
+genre: "Drama",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=800&q=80",
+content: `Daniel found an old letter inside his father's wooden box. The letter revealed that he had a sister named Elena whom he had never met. He searched for her and finally found her in a small town. At first, they felt nervous because they were strangers. As they talked, they learned about their family and their father's past. Daniel realized that the truth could bring a family together.`
+},
+
+{
+title: "The Hidden Island",
+genre: "Adventure",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=800&q=80",
+content: `Leo and his friends found an old map inside a bottle near the beach. The map showed the location of a hidden island. They sailed across the sea and discovered beautiful waterfalls, tall trees, and colorful birds. Inside a cave, they found a journal about the island's history. The friends promised to protect the island and keep it clean.`
+},
+
+{
+title: "The Clock at Midnight",
+genre: "Mystery",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1501139083538-0139583c060f?auto=format&fit=crop&w=800&q=80",
+content: `Every night, the old clock in the town library stopped at midnight. Mia wanted to discover why. One evening, she found a small key behind a shelf. It opened a wooden box containing a missing clock gear. With the librarian's help, Mia repaired the clock. From that night on, it worked perfectly.`
+},
+
+{
+title: "The Little Dragon",
+genre: "Fantasy",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80",
+content: `Ben was walking beside a river when he heard a strange sound. Behind a rock, he found a tiny dragon that could not fly. Ben gave it food and helped it practice moving its wings. Every day, the dragon became stronger. One morning, it finally flew above the trees. Ben learned that patience and kindness could help others grow.`
+},
+
+{
+title: "A New Beginning",
+genre: "School Life",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=80",
+content: `Anna felt nervous on her first day at a new school. She did not know anyone. During lunch, some classmates invited her to sit with them. They showed her around the school and told her about different clubs. Anna joined the art club and made new friends. She learned that trying new things could lead to wonderful friendships.`
+},
+
+{
+title: "The Robot Helper",
+genre: "Science Fiction",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80",
+content: `Mark loved building machines. One weekend, he created a small robot named Robo to help with household chores. One day, Robo suddenly stopped moving. Mark checked its parts and found a loose wire. He repaired the connection and tested the robot again. Robo started working properly. Mark learned that technology needed care and attention.`
+},
+
+{
+title: "The Missing Puppy",
+genre: "Animal Story",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=80",
+content: `Lily was playing in the garden with her puppy, Brownie. When she returned with a bowl of water, Brownie was gone. Lily asked her family for help. They searched the street and nearby park. Finally, they heard a small bark behind a bench. Brownie was hiding there. Lily brought her puppy home and promised to keep the gate closed.`
+},
+
+{
+title: "The Brave Firefly",
+genre: "Fantasy",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1476231682828-37e571bc172f?auto=format&fit=crop&w=800&q=80",
+content: `Flick was a little firefly who was afraid of the dark forest. One evening, he heard a rabbit crying because it could not find its way home. Flick decided to help. He flew through the trees and used his small light to guide the rabbit. They safely reached the rabbit's home. Flick learned that even a small light could make a big difference.`
+},
+
+{
+title: "The Old Photograph",
+genre: "Family",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=80",
+content: `Ella found an old photograph inside a book while cleaning her grandmother's room. She asked her grandmother about the people in the picture. Her grandmother shared stories about their family and traditions. Ella listened carefully and learned about her relatives. She placed the photograph in a frame so everyone could see it.`
+},
+
+{
+title: "The Quiet Garden",
+genre: "Inspirational",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=800&q=80",
+content: `Noah noticed that the garden near his home was full of trash and dry plants. He invited his friends to help clean it. They removed weeds and planted flowers. Soon, their neighbors joined them. After several days, the garden became a peaceful place. Noah learned that teamwork could turn a neglected place into something beautiful.`
+},
+
+{
+title: "The Star Collector",
+genre: "Fantasy",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=800&q=80",
+content: `Nina loved looking at the night sky. She used a telescope to study stars and constellations. Every evening, she wrote her discoveries in a notebook. One night, she invited her classmates to observe the stars. She explained the patterns and answered their questions. Nina discovered that learning about the universe was an exciting adventure.`
+},
+
+{
+title: "The Secret Recipe",
+genre: "Family",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=800&q=80",
+content: `Marco wanted to learn how to make his grandmother's famous soup. He watched her prepare the ingredients and wrote every step in a notebook. Later, he tried making the soup by himself. It was not perfect at first, but his grandmother helped him improve. Marco promised to prepare the soup during future family gatherings.`
+},
+
+{
+title: "The Mountain Path",
+genre: "Adventure",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80",
+content: `Alex joined a school trip to the mountains. His teacher reminded everyone to follow the guide and stay together. The path was steep, and some students became tired. Alex encouraged them to take breaks and help one another. After a long climb, they reached a beautiful viewpoint. Alex learned the importance of teamwork and respect for nature.`
+},
+
+{
+title: "The Paper Boat",
+genre: "Adventure",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80",
+content: `After a rainy afternoon, Sam folded a sheet of paper into a small boat. He placed it in a stream near his home. The boat floated past leaves and small stones until it became stuck against a branch. Sam carefully moved the branch. The boat continued to a quiet pond. Sam watched it float and imagined all the places it might visit.`
+},
+
+{
+title: "The Moonlight Library",
+genre: "Fantasy",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=800&q=80",
+content: `Clara loved visiting the town library. One evening, she noticed a narrow door hidden behind a shelf. Inside, she discovered unusual books about distant lands and forgotten adventures. She told the librarian about the room. The librarian explained that it had been closed for many years. From then on, Clara visited often to discover new stories.`
+},
+
+{
+title: "The School Newspaper",
+genre: "School Life",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80",
+content: `A group of students decided to create a school newspaper. Mia wrote articles, Ben took photographs, and Carlo checked spelling. They interviewed teachers and classmates. At first, organizing the work was difficult, but they learned to cooperate. When the first issue was released, many students enjoyed reading it. The team learned the value of teamwork and honest reporting.`
+},
+
+{
+title: "The Friendly Ghost",
+genre: "Fantasy",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=800&q=80",
+content: `Jamie was helping clean an old theater when he heard music from an empty room. Inside, he met a friendly ghost who had lost an important music sheet. Jamie helped search the stage and storage area. At last, he found the paper inside an old box. The ghost thanked him and played a beautiful tune. Jamie learned not to judge others too quickly.`
+},
+
+{
+title: "The Last Tree",
+genre: "Environment",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80",
+content: `In a town filled with buildings, one large tree remained in a small park. When children learned that it might be removed, they decided to protect it. They talked to their neighbors and organized a meeting. Together, they explained why trees were important. The community agreed to care for the old tree and plant more trees around town.`
+},
+
+{
+title: "The Chess Match",
+genre: "Competition",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1586165368502-1bad197a6461?auto=format&fit=crop&w=800&q=80",
+content: `Ryan practiced chess every afternoon because he wanted to win the school competition. During the final match, he faced a strong opponent. Ryan tried his best but eventually lost. Although he felt disappointed, he congratulated the winner. His coach reminded him that every match was an opportunity to learn. Ryan returned to practice with a better attitude.`
+},
+
+{
+title: "The Music Box",
+genre: "Mystery",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=800&q=80",
+content: `Sophie found a small music box while cleaning her grandmother's attic. When she opened it, a gentle melody filled the room. Beneath the lid, she noticed a name written in faded letters. Her grandmother explained that the box had belonged to her great-grandmother. Sophie listened to family memories and kept the music box as a special treasure.`
+},
+
+{
+title: "The Helpful Neighbor",
+genre: "Inspirational",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&w=800&q=80",
+content: `Mr. Cruz was an elderly neighbor who needed help caring for his garden. Some children noticed that he was having difficulty carrying his tools. They offered to water the plants and remove weeds. Other neighbors soon joined them. Mr. Cruz thanked everyone and shared vegetables from his garden. The children learned that small acts of kindness could bring people together.`
+},
+
+{
+title: "The Puzzle Room",
+genre: "Mystery",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=800&q=80",
+content: `Four friends entered a puzzle room filled with riddles and hidden clues. They had to open a locked box before time ran out. One studied the numbers while another searched the walls. The others connected the clues. After several attempts, they discovered the correct combination. The box opened with a message congratulating them for their teamwork.`
+},
+
+{
+title: "The Winter Visitor",
+genre: "Family",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1517299321609-52687d1bc55a?auto=format&fit=crop&w=800&q=80",
+content: `One cold afternoon, a family noticed an elderly traveler near the road. He was trying to find the bus station. The family listened and checked the directions with him. They helped him find the correct route. Before leaving, the traveler thanked them for their kindness. The family felt happy because they had helped someone in need.`
+},
+
+{
+title: "The Ocean Promise",
+genre: "Environment",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=800&q=80",
+content: `Maya and her friends visited the beach and noticed plastic bottles scattered along the shore. They organized a beach cleanup and collected the rubbish. Other visitors joined them after seeing their efforts. The beach became cleaner. Before going home, the friends promised to reduce plastic use and encourage others to protect the ocean.`
+},
+
+{
+title: "The Time Traveler's Notebook",
+genre: "Science Fiction",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=800&q=80",
+content: `Ethan discovered an old notebook filled with drawings of strange machines and dates from history. He wondered what they meant and began researching them. The notebook inspired him to build a small science project. He explained the historical events to his classmates. They enjoyed the presentation and asked questions. Ethan learned that curiosity and research could make learning exciting.`
+},
+
+{
+title: "The Talent Show",
+genre: "School Life",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=800&q=80",
+content: `Lara wanted to sing in the school talent show, but she felt nervous. Her friends encouraged her to practice after class. On the day of the show, Lara walked onto the stage and sang the song she had practiced. The audience applauded, and Lara smiled. She learned that courage meant trying even when something felt difficult.`
+},
+
+{
+title: "The Desert Compass",
+genre: "Adventure",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1509316785289-025f5b846b35?auto=format&fit=crop&w=800&q=80",
+content: `Omar joined an expedition across a wide desert. Before leaving, the guide taught everyone how to read a map and use a compass. During the journey, a sandstorm made the path difficult to recognize. Omar checked the compass and helped the group find the correct direction. They reached their destination safely. Omar learned the importance of preparation and teamwork.`
+},
+
+{
+title: "The Kind Inventor",
+genre: "Science Fiction",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80",
+content: `Ella enjoyed making things from recycled materials. One day, she noticed an elderly neighbor struggling to carry groceries. Ella designed a small cart to help him. Her first design was difficult to turn, so she improved the wheels and tested it again. After several changes, the cart worked well. Ella learned that simple inventions could make life easier.`
+},
+
+{
+title: "The Carnival Ticket",
+genre: "Adventure",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=800&q=80",
+content: `Noah found a carnival ticket near the entrance of a busy fair. He enjoyed the colorful rides and games. While walking between the stalls, he noticed a wallet on the ground. Instead of keeping it, he brought it to the information booth. The owner returned and thanked Noah for being honest. Noah felt proud because he had made the right choice.`
+},
+
+{
+title: "The Dawn Express",
+genre: "Science Fiction",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=800&q=80",
+content: `Mira boarded the Dawn Express, a modern electric train traveling between busy cities. She watched the countryside pass through the windows. A science teacher explained how electric trains could transport many people. Mira learned that cleaner transportation could help reduce pollution. She wrote about the journey for a school assignment and began thinking about how technology could help the environment.`
+},
+
+{
+title: "The Magical Paintbrush",
+genre: "Fantasy",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=80",
+content: `Lena found an old paintbrush in her grandfather's workshop. When she painted a flower, it seemed to glow with magical light. She painted trees and colorful birds to brighten her village. Soon, the walls looked beautiful and the neighbors felt happy. Lena discovered that art could bring people together. She used her talent to make the village a more cheerful place.`
+},
+
+{
+title: "The Lost Key",
+genre: "Mystery",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=800&q=80",
+content: `Peter found a strange key under his desk at school. Nobody knew what it opened. He asked his classmates and teacher for clues. After searching the classroom, he noticed a small cabinet that had not been opened for years. The key fit the lock. Inside were old school photographs and letters. Peter brought them to the teacher, who shared their history with the class.`
+},
+
+{
+title: "The Friendship Bridge",
+genre: "Friendship",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80",
+content: `Two villages were separated by a small river. Children from each village wanted to play together, but the journey was difficult. Their families worked together to repair an old wooden bridge. Everyone helped carry tools and materials. When the bridge was finished, the children met in the middle and became friends. They learned that cooperation could bring different communities closer together.`
+},
+
+{
+title: "The Little Baker",
+genre: "Inspirational",
+author: "My Storybook",
+published: "2026",
+image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=800&q=80",
+content: `Ben wanted to help his family by learning how to bake bread. His first attempt was too hard, but he did not give up. His mother taught him how to measure ingredients and knead the dough. After practicing many times, Ben made a fresh loaf that everyone enjoyed. He learned that patience and practice could help him improve.`
+}
+
+];
+
+// =====================================
+// DISPLAY STORY CARDS
+// =====================================
+
+const bookList = document.getElementById("bookList");
+const reader = document.getElementById("reader");
+const home = document.getElementById("home");
+const storiesSection = document.getElementById("stories");
+const about = document.getElementById("about");
+const search = document.getElementById("search");
+const themeBtn = document.getElementById("themeBtn");
+
+function displayStories(list = stories) {
+    bookList.innerHTML = "";
+
+    document.getElementById("storyCount").textContent =
+        list.length + (list.length === 1
+        ? " story found."
+        : " stories found.");
+
+    if (list.length === 0) {
+        bookList.textContent =
+            "No stories found. Try another search.";
+        return;
+    }
+
+    list.forEach(function(story) {
+        const book = document.createElement("div");
+        book.className = "book";
+
+        const img = document.createElement("img");
+        img.src = story.image;
+        img.alt = story.title + " cover";
+        img.loading = "lazy";
+
+        img.onerror = function() {
+            this.onerror = null;
+            this.src =
+                "https://placehold.co/600x400/eeeeee/111111?text=Story+Cover";
+        };
+
+        const title = document.createElement("h3");
+        title.textContent = story.title;
+
+        const genre = document.createElement("p");
+        genre.textContent = "Genre: " + story.genre;
+
+        const author = document.createElement("p");
+        author.textContent = "Author: " + story.author;
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = "Read Story";
+
+        button.addEventListener("click", function() {
+            readStory(stories.indexOf(story));
+        });
+
+        book.append(img, title, genre, author, button);
+        bookList.appendChild(book);
+    });
+}
+
+// =====================================
+// OPEN STORY
+// =====================================
+
+function readStory(index) {
+    const story = stories[index];
+
+    if (!story) return;
+
+    document.getElementById("storyTitle").textContent =
+        story.title;
+
+    document.getElementById("storyGenre").textContent =
+        "Genre: " + story.genre;
+
+    document.getElementById("storyMeta").textContent =
+        "Author: " + story.author +
+        " | Published: " + story.published;
+
+    document.getElementById("storyContent").textContent =
+        story.content;
+
+    const storyImage = document.getElementById("storyImage");
+
+    storyImage.onerror = function() {
+        this.onerror = null;
+        this.src =
+            "https://placehold.co/600x400/eeeeee/111111?text=Story+Cover";
+    };
+
+    storyImage.src = story.image;
+    storyImage.alt = story.title + " cover";
+
+    home.hidden = true;
+    storiesSection.hidden = true;
+    about.hidden = true;
+    reader.hidden = false;
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+// =====================================
+// BACK TO STORIES
+// =====================================
+
+document.getElementById("backBtn").addEventListener(
+    "click",
+    function() {
+        reader.hidden = true;
+        home.hidden = false;
+        storiesSection.hidden = false;
+        about.hidden = false;
+
+        document.getElementById("navigation")
+            .scrollIntoView({ behavior: "smooth" });
+    }
+);
+
+// =====================================
+// SEARCH STORIES
+// =====================================
+
+search.addEventListener("input", function() {
+    const keyword = this.value.toLowerCase().trim();
+
+    const filteredStories = stories.filter(function(story) {
+        return (
+            story.title.toLowerCase().includes(keyword) ||
+            story.genre.toLowerCase().includes(keyword) ||
+            story.author.toLowerCase().includes(keyword) ||
+            story.content.toLowerCase().includes(keyword)
+        );
+    });
+
+    displayStories(filteredStories);
+});
+
+// =====================================
+// DARK MODE / LIGHT MODE
+// =====================================
+
+themeBtn.addEventListener("click", function() {
+    document.body.classList.toggle("dark");
+
+    if (document.body.classList.contains("dark")) {
+        themeBtn.textContent = "Light Mode";
+    } else {
+        themeBtn.textContent = "Dark Mode";
+    }
+});
+
+// =====================================
+// LOAD ALL STORIES
+// =====================================
+
+displayStories();
+
+</script>
+
+</body>
+</html>
+```
